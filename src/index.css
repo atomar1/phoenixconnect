@@ -1,3 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Ultra&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+.font-ultra {
+    font-family: 'Ultra', serif;
+  }
+  
+  body {
+    @apply antialiased;
+  }
+  
+  ::-webkit-scrollbar {
+    @apply w-2 bg-gray-100;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-brand-red rounded-full;
+  }
