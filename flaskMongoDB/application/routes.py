@@ -1,33 +1,54 @@
-from flask.templating import render_template_string
-from werkzeug.datastructures import RequestCacheControl
-from application import app,db
-from flask import render_template, flash, request, redirect
-from .forms import TodoForm
-from datetime import datetime
+from flask import render_template, flash, request, redirect, url_for, session
+from application import app, db
+from .forms import SignInForm, LoginForm
+from werkzeug.security import generate_password_hash, check_password_hash
 
+
+
+@app.route("/sign_in", methods=["GET", "POST"])
+def sign_in():
+    form = SignInForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        # Check if user already exists
+        existing_user = db.users.find_one({"username": username})
+        if existing_user:
+            flash("Username already exists. Please choose a different one.", "danger")
+            return redirect(url_for("sign_in"))
+
+        # Hash the password and save to DB
+        hashed_password = generate_password_hash(password)
+        db.users.insert_one({"username": username, "password": hashed_password})
+        flash("Sign-up successful! Please log in.", "success")
+        return redirect(url_for("login"))
+    return render_template("sign_in.html", form=form, title="Sign In")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        # Check user credentials
+        user = db.users.find_one({"username": username})
+        if user and check_password_hash(user["password"], password):
+            session["user"] = username  # Log the user in
+            flash(f"Welcome, {username}!", "success")
+            return redirect(url_for("index"))
+        else:
+            flash("Invalid username or password.", "danger")
+    return render_template("login.html", form=form, title="Login")
+
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    flash("You have been logged out.", "success")
+    return redirect(url_for("index"))
 
 @app.route("/")
 def index():
-    return render_template("views_todos.html", title="Layout page")
-
-
-@app.route("/add_todo", methods=["POST", "GET"])
-def add_todo():
-    if request.method == "POST":
-        form = TodoForm(request.form)
-        todo_name = form.name.data
-        todo_description = form.description.data
-        completed = form.completed.data
-
-        db.todo_flask.insert_one({
-            "name": todo_name,
-            "description": todo_description,
-            "completed": completed,
-            "date_completed": datetime.utcnow()
-        })
-        flash("Todo successfully added", "success")
-        return redirect("/")
-    else:
-        form = TodoForm()
-    return render_template("add_todo.html", form=form)
+    return render_template("index.html", title="Home")
 
