@@ -10,9 +10,7 @@ module.exports = {
         },
         colors: {
           'brand-red': '#ad3032',
-        }
-      },
-      extend: {
+        },
         inset: {
           "2.5%": "2.5%",
           "5%": "5%",
