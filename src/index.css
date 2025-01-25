@@ -20,3 +20,27 @@
   ::-webkit-scrollbar-thumb {
     @apply bg-brand-red rounded-full;
   }
+
+:root {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+div#root {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    width: 100vw;
+    max-height: 100vh;
+    overflow: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 4px;
+}
