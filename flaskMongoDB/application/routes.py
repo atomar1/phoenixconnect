@@ -50,5 +50,6 @@ def logout():
 
 @app.route("/")
 def index():
-    return render_template("index.html", title="Home")
-
+    # Check if the user is logged in by checking the session
+    username = session.get("user")  # Retrieve the username from the session
+    return render_template("index.html", username=username, title="Home")
