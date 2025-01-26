@@ -1,0 +1,8 @@
+{% extends "layout.html" %} {% block content %}
+<h1>Welcome to Phoenix!</h1>
+<p>
+  Please <a href="{{ url_for('login') }}">log in</a> or
+  <a href="{{ url_for('sign_in') }}">sign up</a> to view posts and create your
+  own.
+</p>
+{% endblock %}
