@@ -54,32 +54,33 @@ def sign_in():
             flash("Username already exists. Please choose a different one.", "danger")
             return render_template("sign_in.html", form=form)
 
-        # If validation passes, hash the password and save the user
+        # If validation passes, hash the password
         hashed_password = generate_password_hash(password)
-        db.users.insert_one(
-            {"username": username, "password": hashed_password})
+
+        # Handle profile image upload
+        if "profile_image" in request.files:
+            profile_image = request.files["profile_image"]
+            if profile_image and allowed_file(profile_image.filename):
+                filename = secure_filename(profile_image.filename)
+                image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+                profile_image.save(image_path)
+                profile_image_url = f'/uploads/{filename}'
+            else:
+                profile_image_url = "/static/default-profile.png"  # Default image
+        else:
+            profile_image_url = "/static/default-profile.png"
+
+        # Save the user data, including profile image
+        db.users.insert_one({
+            "username": username,
+            "password": hashed_password,
+            "profile_image": profile_image_url
+        })
+
         session["user"] = username
-        flash(
-            f"Welcome, {username}! You have successfully signed in.", "success")
+        session["profile_image"] = profile_image_url
+        flash(f"Welcome, {username}! You have successfully signed in.", "success")
         return redirect(url_for("index"))  # Redirect to the homepage
-
-    profile_image_url = None
-    if "profile_image" in request.files:
-        profile_image = request.files["profile_image"]
-        if profile_image and allowed_file(profile_image.filename):
-            filename = secure_filename(profile_image.filename)
-            image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-            profile_image.save(image_path)
-            profile_image_url = f'/uploads/{filename}'
-    profile_image_url = profile_image_url or "/static/default-profile.png"  # Default profile image
-
-
-    # Save the user data, including profile image
-    db.users.insert_one({
-        "username": username,
-        "password": hashed_password,
-        "profile_image": profile_image_url
-    })
 
     return render_template("sign_in.html", form=form)
 
@@ -118,12 +119,37 @@ def logout():
     flash("You have been logged out.", "info")  # Remove this if not required
     return redirect(url_for("login"))
 
+"""
+def custom_json_serializer(data):
+    if isinstance(data, list):
+        return [custom_json_serializer(item) for item in data]
+    if isinstance(data, dict):
+        return {key: custom_json_serializer(value) for key, value in data.items()}
+    if isinstance(data, ObjectId):
+        return str(data)  # Convert ObjectId to string
+    if isinstance(data, datetime.datetime):
+        return data.isoformat()  # Convert datetime to ISO format
+    return data  # Return data as-is for other types
+
+"""
+
+def mjsonify(data):
+    if isinstance(data, list):
+        return [mjsonify(d) for d in data]
+    if isinstance(data, dict):
+        return {key: mjsonify(value) for key, value in data.items()}
+    if isinstance(data, ObjectId):
+        return str(data)
+    if isinstance(data, datetime):
+        return data.isoformat()
+    return data
+
 
 @app.route("/")
 def index():
     # Check if the user is logged in
-    if "user" not in session:
-        return render_template("welcome.html")  # Render the welcome page
+    # if "user" not in session:
+    #     return render_template("welcome.html")  # Render the welcome page
 
     # Fetch posts and comments if the user is logged in
     posts = list(db.posts.find().sort("timestamp", -1))
@@ -134,11 +160,14 @@ def index():
                 "timestamp", -1)
         )
 
-    for post in posts:
-        user = db.users.find_one({"username": post["username"]})
-        post["user_profile_image"] = user.get("profile_image", "/static/default-profile.png")
+    # print(posts)
+    return mjsonify(posts)
 
-    return render_template("index.html", posts=posts, username=session.get("user"))
+    # for post in posts:
+    #     user = db.users.find_one({"username": post["username"]})
+    #     post["user_profile_image"] = user.get("profile_image", "/static/default-profile.png")
+
+    # return render_template("index.html", posts=posts, username=session.get("user"))
 
 
 @app.route("/create_post", methods=["GET", "POST"])
