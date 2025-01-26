@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useDebugValue } from 'react'
+import axios from 'axios';
 
 function SearchField() {
   return (
@@ -20,10 +21,10 @@ function Form({ setPostList }) {
     e.preventDefault();
 
     setPostList(prvList => [...prvList, {
-      "title": data.title,
-      "name": "tester",
+      "username": "tester",
       "content": data.content,
-      "time": new Date(),
+      "timestamp": new Date(),
+      "comments": []
     }]);
   }
 
@@ -58,89 +59,94 @@ function Form({ setPostList }) {
   )
 }
 
-// mock posts
-const posts = [
-  {
-    title: "kary's first post",
-    name: "kary",
-    content: "my first post",
-    time: new Date(),
-    comments: [
-      {
-        name: "clarie",
-        comment: "hello",
-        time: new Date()
-      },
-    ],
-  },
-  {
-    title: "clarie's first post",
-    name: "clarie",
-    content: "my first post",
-    time: new Date(),
-    comments: [
-      {
-        name: "kary",
-        comment: "hello",
-        time: new Date()
-      },
-      {
-        name: "clarie",
-        comment: "my post is the best",
-        time: new Date()
-      },
-    ],
-  },
-  {
-    title: "ansh's first post",
-    name: "ansh",
-    content: "my first post",
-    time: new Date(),
-    comments: [
-      {
-        name: "clarie",
-        comment: "hello",
-        time: new Date()
-      },
-    ],
-  },
-  {
-    title: "ivan's first post",
-    name: "ivan",
-    content: "my first post",
-    time: new Date(),
-    comments: [],
-  },
-]
+// // mock posts
+// const posts = [
+//   {
+//     title: "kary's first post",
+//     name: "kary",
+//     content: "my first post",
+//     time: new Date(),
+//     comments: [
+//       {
+//         name: "clarie",
+//         comment: "hello",
+//         time: new Date()
+//       },
+//     ],
+//   },
+//   {
+//     title: "clarie's first post",
+//     name: "clarie",
+//     content: "my first post",
+//     time: new Date(),
+//     comments: [
+//       {
+//         name: "kary",
+//         comment: "hello",
+//         time: new Date()
+//       },
+//       {
+//         name: "clarie",
+//         comment: "my post is the best",
+//         time: new Date()
+//       },
+//     ],
+//   },
+//   {
+//     title: "ansh's first post",
+//     name: "ansh",
+//     content: "my first post",
+//     time: new Date(),
+//     comments: [
+//       {
+//         name: "clarie",
+//         comment: "hello",
+//         time: new Date()
+//       },
+//     ],
+//   },
+//   {
+//     title: "ivan's first post",
+//     name: "ivan",
+//     content: "my first post",
+//     time: new Date(),
+//     comments: [],
+//   },
+// ]
 
 function PostList({ postList }) {
   return (
     <div className="">
-      {postList.map((post, i) => (
-        <Post key={`Post${i}`} post={post} />
+      {postList.map((post) => (
+        <Post key={`${post._id}`} post={post} />
       ))}
     </div>
   )
 }
 
 function Post({ className, post, props }) {
+  // console.log(post._id);
+  // console.log("comments[0]", post.comments[0]);
+  // console.log(post.content);
+  // console.log(post.timestamp);
+  // console.log(post.username);
+  console.log(post.image_url);
   return (
     <div className={`text-left text-base rounded-xl border border-gray-300 m-4 px-4 pt-4 pb-2 ${className}`} {...props}>
       <div className="flex justify-between">
-        <p className="text-4xl font-bold">{post.title}</p>
-        <p className="font-bold">{post.name}</p>
+        <p className="font-bold">{post.username}</p>
       </div>
+      {post.image_url && <img src={post.image_url} />}
       <p className="text-lg my-2">{post.content}</p>
-      <time dateTime={post.time} className="text-xs">{`${post.time.toLocaleString()}`}</time>
+      <time dateTime={new Date(post.timestamp).toLocaleTimeString()} className="text-xs">{`${new Date(post.timestamp).toLocaleTimeString()}`}</time>
       <div className="pt-4">
-        <p className="pb-2">Comments</p>
-        {post.comments.map((comment, i) => (
+        {post.comments.map((comment) => (
           <>
-            <div key={`commemt${i}`} className="flex justify-between">
-              <p key={`commemt${i}${comment.name}`} className="text-sm font-bold">{comment.name}</p>
-              <time key={`commemt${i}${comment.time.toLocaleString()}`} dateTime={comment.time} className="text-xs">{comment.time.toLocaleString()}</time>
+            <div key={`${comment._id}`} className="flex justify-between">
+              <p key={`${comment._id}${comment.username}`} className="text-sm font-bold">{comment.username}</p>
+              <time key={`${comment._id}${new Date(comment.timestamp).toLocaleTimeString()}`} dateTime={comment.time} className="text-xs">{new Date(comment.timestamp).toLocaleTimeString()}</time>
             </div>
-            <p key={`commemt${i}${comment.comment}`} className="pl-4 pb-2">{comment.comment}</p>
+            <p key={`${comment._id}${comment.content}`} className="pl-4 pb-2">{comment.content}</p>
           </>
         ))}
       </div>
@@ -150,7 +156,20 @@ function Post({ className, post, props }) {
 
 function Community() {
   const [isOpen, setOpen] = useState(false);
-  const [postList, setPostList] = useState(posts);
+  const [postList, setPostList] = useState([]);
+  const dbUrl = "http://localhost:5000"
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const resp = await axios.get(dbUrl);
+        setPostList(resp.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchPosts()
+  }, []);
 
   function AddButton({ children }) {
     return (
