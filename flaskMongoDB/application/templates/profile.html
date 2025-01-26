@@ -1,0 +1,28 @@
+{% extends "layout.html" %} {% block content %}
+<h1>{{ user.username }}'s Profile</h1>
+<img
+  src="{{ user.profile_image or '/static/default-profile.png' }}"
+  alt="Profile Picture"
+  class="rounded-circle mb-3"
+  style="width: 100px; height: 100px; object-fit: cover;"
+/>
+<h3>Posts</h3>
+{% for post in posts %}
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title">{{ post.username }}</h5>
+    <p class="card-text">{{ post.content }}</p>
+    {% if post.image_url %}
+    <img src="{{ post.image_url }}" alt="Post Image" class="img-fluid mt-3" />
+    {% endif %}
+    <p class="card-text">
+      <small class="text-muted"
+        >Posted on {{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small
+      >
+    </p>
+  </div>
+</div>
+{% else %}
+<p>No posts yet.</p>
+{% endfor %}
+{% endblock %}

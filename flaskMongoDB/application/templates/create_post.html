@@ -1,0 +1,24 @@
+{% extends "layout.html" %} {% block content %}
+<h1>Create a Post</h1>
+<form method="POST" enctype="multipart/form-data">
+  <div class="form-group">
+    <textarea
+      name="content"
+      class="form-control"
+      rows="5"
+      placeholder="Write something..."
+      required
+    ></textarea>
+  </div>
+  <div class="form-group">
+    <label for="image">Add an Image (optional):</label>
+    <input
+      type="file"
+      name="image"
+      class="form-control-file"
+      accept="image/*"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary mt-2">Post</button>
+</form>
+{% endblock %}
