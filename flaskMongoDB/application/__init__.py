@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, static_folder="static")
 
-CORS(app)
+CORS(app, origins=["http://localhost:5173"])
 
 # Ensure the uploads directory exists
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
