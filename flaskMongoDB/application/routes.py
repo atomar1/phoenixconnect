@@ -85,31 +85,42 @@ def sign_in():
     return render_template("sign_in.html", form=form)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST"])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
+    # form = LoginForm()
+    # if form.validate_on_submit():
+    #     username = form.username.data
+    #     password = form.password.data
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    # print("password", password)
+    # print("username:", username)
 
-        # Check if the user exists
-        user = db.users.find_one({"username": username})
-        if not user:
-            flash("User does not exist.", "danger")
-            return render_template("login.html", form=form, title="Login")
+    # Check if the user exists
+    user = db.users.find_one({"username": username})
+    # if not user:
+    #     flash("User does not exist.", "danger")
+    #     return render_template("login.html", form=form, title="Login")
+ 
+    # Check password
+    if not user or not check_password_hash(user["password"], password):
+        return { "status": "Not Found" }
+    return { "status": "OK" }
+    #     flash("Incorrect password.", "danger")
+    #     return render_template("login.html", form=form, title="Login")
+    
 
-        # Check password
-        if not check_password_hash(user["password"], password):
-            flash("Incorrect password.", "danger")
-            return render_template("login.html", form=form, title="Login")
+    # Log in the user if credentials are valid
+    # session["user"] = username
+    # session["profile_image"] = user.get("profile_image", "/static/default-profile.png")  # Add this line
+    # return {
+    #     username: username,
+    # }
+    #     flash(f"Welcome back, {username}!", "success")
+    #     return redirect(url_for("index"))
 
-        # Log in the user if credentials are valid
-        session["user"] = username
-        session["profile_image"] = user.get("profile_image", "/static/default-profile.png")  # Add this line
-        flash(f"Welcome back, {username}!", "success")
-        return redirect(url_for("index"))
-
-    return render_template("login.html", form=form, title="Login")
+    # return render_template("login.html", form=form, title="Login")
 
 
 

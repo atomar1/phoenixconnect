@@ -23,6 +23,12 @@ const Navbar = () => {
           Resources
         </Link>
         <Link 
+          to="/shelter" 
+          className="text-gray-700 hover:text-brand-red transition-colors"
+        >
+          Shelter
+        </Link>
+        <Link 
           to="/community" 
           className="text-gray-700 hover:text-brand-red transition-colors"
         >

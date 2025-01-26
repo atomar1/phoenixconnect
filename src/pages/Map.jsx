@@ -59,7 +59,7 @@ const Map = () => {
       heatmap.setMap(showHeatmap ? map : null);
     } catch (error) {
       console.error("Wildfire fetch error:", error);
-      setError("Unable to fetch wildfire data");
+      // setError("Unable to fetch wildfire data");
     }
   };
 
@@ -70,7 +70,7 @@ const Map = () => {
       setShelters(sheltersData);
     } catch (error) {
       console.error("Shelter fetch error:", error);
-      setError("Unable to fetch shelter data");
+      // setError("Unable to fetch shelter data");
     }
   };
 

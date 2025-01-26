@@ -5,6 +5,9 @@ import Community from './pages/Community'
 import Navbar from './components/Navbar'
 import Footbar from "./components/Footbar"
 import Map from "./pages/Map"
+import Login from "./pages/Login"
+import RiskAssessmentPage from "./pages/RiskAsse"
+import ShelterFinder from "./pages/Shelter"
 
 function App() {
   return (
@@ -15,8 +18,11 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/resource" element={<Map />}/>
+          <Route path="/resources" element={<Map />}/>
           <Route path="/community" element={<Community />}/>
+          <Route path="/login" element={<Login />}/>
+          <Route path="/risk-assessment" element={<RiskAssessmentPage />}/>
+          <Route path="/shelter" element={<ShelterFinder />}/>
         </Routes>
       </div>
       <Footbar />

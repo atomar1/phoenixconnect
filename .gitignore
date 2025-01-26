@@ -33,3 +33,4 @@ flaskMongoDB/application/__pycache__
 
 *.env
 *.zip
+.vite
