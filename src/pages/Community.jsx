@@ -130,7 +130,7 @@ function Post({ className, post, props }) {
   // console.log(post.content);
   // console.log(post.timestamp);
   // console.log(post.username);
-  console.log(post.image_url);
+  // console.log(post.image_url);
   return (
     <div className={`text-left text-base rounded-xl border border-gray-300 m-4 px-4 pt-4 pb-2 ${className}`} {...props}>
       <div className="flex justify-between">
