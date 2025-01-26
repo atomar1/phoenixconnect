@@ -159,13 +159,12 @@ def index():
             db.comments.find({"post_id": ObjectId(post["_id"])}).sort(
                 "timestamp", -1)
         )
+    for post in posts:
+        user = db.users.find_one({"username": post["username"]})
+        post["user_profile_image"] = user.get("profile_image", "/static/default-profile.png")
 
     # print(posts)
     return mjsonify(posts)
-
-    # for post in posts:
-    #     user = db.users.find_one({"username": post["username"]})
-    #     post["user_profile_image"] = user.get("profile_image", "/static/default-profile.png")
 
     # return render_template("index.html", posts=posts, username=session.get("user"))
 

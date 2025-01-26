@@ -3,6 +3,7 @@ import './App.css'
 import Home from './pages/Home'
 import Community from './pages/Community'
 import Navbar from './components/Navbar'
+import Footbar from "./components/Footbar"
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/community" element={<Community />}/>
         </Routes>
       </div>
+      <Footbar />
     </BrowserRouter>
   )
 }
