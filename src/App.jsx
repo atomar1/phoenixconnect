@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import './App.css'
 import Home from './pages/Home'
+import Community from './pages/Community'
 import Navbar from './components/Navbar'
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/community" element={<Community />}/>
         </Routes>
       </div>
     </BrowserRouter>
