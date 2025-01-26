@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python files
+backend/venv/bin
+backend/venv/include
+backend/venv/lib
+backend/venv/share
+
+flaskMongoDB/application/__pycache__
+
+*.env
+*.zip

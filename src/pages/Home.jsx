@@ -1,9 +1,11 @@
 import React from 'react'
+import { useNavigate } from 'react-router';
 
 function Home() {
-  function findShelter() {
-    console.log("Here");
-  }
+  const navigate = useNavigate();
+  // function findShelter() {
+  //   console.log("Here");
+  // }
   return (
     <div
       className="relative rounded-3xl flex-1 max-h-full bg-cover bg-center max-w-full"
@@ -17,7 +19,7 @@ function Home() {
       </div>
       <div className="absolute top-3/5 left-2.5%">
         <button
-          onClick={findShelter}
+          onClick={() => navigate("/resource")}
           className="border rounded-md p-2 bg-gray-100"
         >Find Nearby Shelter</button>
       </div>
